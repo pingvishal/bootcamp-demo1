@@ -1,0 +1,30 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger: none
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'RMPM (afc11291-9826-46be-b852-70349146ddf8)'
+    scriptType: 'ps'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      echo "SPN ID: $env:servicePrincipalId"
+      echo "SPN key: $env:servicePrincipalKey"
+      echo "TenandId: $env:tenantId"
+      
+      
+      echo "##vso[task.setvariable variable=AZURE_CLIENT_ID;issecret=false]$env:servicePrincipalId"
+      
+      echo "##vso[task.setvariable variable=AZURE_CLIENT_SECRET;issecret=false]$env:servicePrincipalKey"
+      
+      echo "##vso[task.setvariable variable=AZURE_SUBSCRIPTION_ID;issecret=false]$(az account show --query 'id' -o tsv)"
+      
+      echo "##vso[task.setvariable variable=AZURE_TENANT_ID;issecret=false]$env:tenantId"
+    addSpnToEnvironment: true
